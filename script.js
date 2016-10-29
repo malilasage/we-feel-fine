@@ -1,3 +1,4 @@
+// converts wff api xml results to json
 $(document).ready(function() {
   var parser;
   var xmlDoc;
