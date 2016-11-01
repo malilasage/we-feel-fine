@@ -1,4 +1,5 @@
 // converts wff api xml results to json
+// 'use strict'
 var result;
 $(document).ready(function() {
   var resultObj;
@@ -59,17 +60,17 @@ $(document).ready(function() {
       var feelingCount = {};
       var highestFeels = {};
       //returns feelings as an array
-      for (i = 0; i < result.feelings.feeling.length; i++) {
+      for (var i = 0; i < result.feelings.feeling.length; i++) {
         var trueFeeling = result.feelings.feeling[i].attributes;
         if(trueFeeling !== undefined) {
           feelingArr[feelingArr.length] = trueFeeling.feeling;
         }
       }
-      //returns object with key being a feeling and value being # of occurances 
-      for(i = 0; i < feelingArr.length; i++) {
+      //returns object with key being a feeling and value being # of occurances
+      for(var i = 0; i < feelingArr.length; i++) {
         var feel = feelingArr[i];
         var num = 1;
-        for (x = 0; x < feelingArr.length; x++) {
+        for (var x = 0; x < feelingArr.length; x++) {
           if(feel === feelingArr[x]) {
             feelingCount[feel] = num;
             num++;
@@ -77,17 +78,29 @@ $(document).ready(function() {
           }
         }
       }
-      console.log(feelingCount);
-      for(i = 0; i < 5; i++) {
-        var highest;
+      //returns obj of 5 highest occuring feelings
+      // var key = Object.keys(feelingCount);
+      // console.log([key[5]], feelingCount[key[5]]);
+      var highestEmotions = [];
+      for(var i = 0; i < 5; i++) {
+        var highestNum = 0;
         //if value is higher than value before, highest is equal to it
-        for(x = 0; x < feelingCount.length; x++) {
-          console.log(feelingCount);
+        for(var x = 0; x < Object.keys(feelingCount).length; x++) {
+          var key = Object.keys(feelingCount);
+          var currentVal = feelingCount[key[x]];
+          //if(feelingCount.key.value > highest) {highestFeel = feelingCount[x]}
+          if(currentVal > highestNum) {
+            highestNum = currentVal;
+            highestEmotions = [key[x], currentVal];
+            // console.log(currentVal);
+          }
         }
+        // delete feelingCount
         //return highest as obj inside obj named 1st place
         //remove highest obj from feeling count
         //repeat until 5 highest
       }
+      console.log(highestEmotions);
       // highestFeels.push(highest);
     }
   // }
