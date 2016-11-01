@@ -1,8 +1,12 @@
 // converts wff api xml results to json
+var result;
 $(document).ready(function() {
+  var resultObj;
   var parser;
   var xmlDoc;
-  var $xhr = $.get('http://api.wefeelfine.org:8080/ShowFeelings?display=xml&returnfields=feeling,sentence&limit=50');
+  // var url = 'https://g-wefeelfine.herokuapp.com/ShowFeelings?display=xml&returnfields=feeling&feeling=sad&city=seattle&state=washington&limit=100'
+  var url = 'https://g-wefeelfine.herokuapp.com/ShowFeelings?display=xml&returnfields=feeling&city=seattle&state=washington&limit=1500';
+  var $xhr = $.get(url);
 //gets results and parses them to XML DOM document
   $xhr.done(function(data) {
     if ($xhr.status !== 200) {
@@ -10,18 +14,13 @@ $(document).ready(function() {
         return;
     }
     else{
-      // console.log(data);
       parser = new DOMParser();
       xmlDoc = parser.parseFromString(data,"text/xml");
-      // console.log(xmlDoc);
     }
-//hopefully converts XML DOM doc to JSON
   // Changes XML to JSON
   function xmlToJson(xml) {
-  // console.log(xml);
 	// Create the return object
    var obj = {};
-
 	  if (xml.nodeType == 1) { // element
 		    // do attributes
 		  if (xml.attributes.length > 0) {
@@ -53,10 +52,45 @@ $(document).ready(function() {
 		  }
 	  }
 	return obj;
-  };
-    // var jsonText = JSON.stringify(xmlToJson(xmlDoc));
-    // console.log(xmlToJson(xmlDoc));
-    var result = xmlToJson(xmlDoc);
-    console.log(result.feelings);
-  });
+  }
+    result = xmlToJson(xmlDoc);
+    function emotionOccurance(result) {
+      var feelingArr = [];
+      var feelingCount = {};
+      var highestFeels = {};
+      //returns feelings as an array
+      for (i = 0; i < result.feelings.feeling.length; i++) {
+        var trueFeeling = result.feelings.feeling[i].attributes;
+        if(trueFeeling !== undefined) {
+          feelingArr[feelingArr.length] = trueFeeling.feeling;
+        }
+      }
+      //returns object with key being a feeling and value being # of occurances 
+      for(i = 0; i < feelingArr.length; i++) {
+        var feel = feelingArr[i];
+        var num = 1;
+        for (x = 0; x < feelingArr.length; x++) {
+          if(feel === feelingArr[x]) {
+            feelingCount[feel] = num;
+            num++;
+            feelingArr.splice(x, 1);
+          }
+        }
+      }
+      console.log(feelingCount);
+      for(i = 0; i < 5; i++) {
+        var highest;
+        //if value is higher than value before, highest is equal to it
+        for(x = 0; x < feelingCount.length; x++) {
+          console.log(feelingCount);
+        }
+        //return highest as obj inside obj named 1st place
+        //remove highest obj from feeling count
+        //repeat until 5 highest
+      }
+      // highestFeels.push(highest);
+    }
+  // }
+  emotionOccurance(result);
+})
 })
